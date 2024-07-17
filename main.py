@@ -13,6 +13,7 @@ from src.datasets import ThingsMEGDataset
 from src.models import BasicConvClassifier
 from src.utils import set_seed
 
+from src.models import ImprovedConvClassifier
 
 @hydra.main(version_base=None, config_path="configs", config_name="config")
 def run(args: DictConfig):
@@ -39,10 +40,8 @@ def run(args: DictConfig):
     # ------------------
     #       Model
     # ------------------
-    model = BasicConvClassifier(
-        train_set.num_classes, train_set.seq_len, train_set.num_channels
-    ).to(args.device)
-
+    #model = BasicConvClassifier(train_set.num_classes, train_set.seq_len, train_set.num_channels).to(args.device)
+    model = ImprovedConvClassifier(train_set.num_classes, train_set.seq_len, train_set.num_channels).to(args.device)
     # ------------------
     #     Optimizer
     # ------------------
