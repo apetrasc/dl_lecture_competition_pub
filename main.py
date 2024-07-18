@@ -50,6 +50,8 @@ def run(args: DictConfig):
     # ------------------
     #   Start training
     # ------------------  
+    l1_lambda = 1e-5  
+    l2_lambda = 1e-4
     max_val_acc = 0
     accuracy = Accuracy(
         task="multiclass", num_classes=train_set.num_classes, top_k=10
@@ -67,6 +69,13 @@ def run(args: DictConfig):
             y_pred = model(X)
             
             loss = F.cross_entropy(y_pred, y)
+            l1_reg = torch.tensor(0., requires_grad=True).to(args.device)
+            l2_reg = torch.tensor(0., requires_grad=True).to(args.device)
+            for param in model.parameters():
+                l1_reg = l1_reg + torch.norm(param, 1)
+                l2_reg = l2_reg + torch.norm(param, 2)
+            
+            loss = loss + l1_lambda * l1_reg + l2_lambda * l2_reg
             train_loss.append(loss.item())
             
             optimizer.zero_grad()
